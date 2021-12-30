@@ -18,6 +18,9 @@ func main() {
 	client.OnPrivateMessage(func(message twitch.PrivateMessage) {
 		// fmt.Printf("[#%s] <%s>: %s\n", message.Channel, message.User.Name, message.Message)
 		args := strings.Split(message.Message, " ")
+		if len(args) > 1 {
+			args[1] = strings.ToLower(args[1])
+		}
 		if message.User.Badges["moderator"] == 1 {
 			// mod zone
 			if args[0] == "!permitremove" {

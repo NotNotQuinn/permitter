@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"os"
+	"strings"
 )
 
 var users []string = nil
@@ -14,6 +15,7 @@ func init() {
 }
 
 func addUsertoList(username string) error {
+	username = strings.ToLower(username)
 	users = append(users, username)
 	return saveUserlist()
 }
@@ -27,6 +29,7 @@ func saveUserlist() error {
 }
 
 func removeUserFromList(username string) error {
+	username = strings.ToLower(username)
 	tmp := []string{}
 	for _, v := range users {
 		if v != username {
@@ -38,6 +41,7 @@ func removeUserFromList(username string) error {
 }
 
 func userIsOnList(username string) bool {
+	username = strings.ToLower(username)
 	for _, v := range users {
 		if v == username {
 			return true

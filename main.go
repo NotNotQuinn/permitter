@@ -3,7 +3,9 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
+	"math/rand"
 	"strings"
+	"time"
 
 	"github.com/gempir/go-twitch-irc/v3"
 )
@@ -93,7 +95,7 @@ func main() {
 	}
 	reactToPajbot := func(message twitch.PrivateMessage) {
 		if message.User.Name == "pajbot" && message.Action && message.Message == "pajaS 🚨 ALERT" {
-			selfClient.Say(message.Channel, "pajaVanish 🚨 ALERT RECIEVED")
+			selfClient.Say(message.Channel, "/me pajaVanish 🚨 ALERT RECEIVED")
 		}
 	}
 	selfClient.OnPrivateMessage(func(message twitch.PrivateMessage) {
@@ -110,12 +112,16 @@ func main() {
 			reactToPajbot(message)
 		}
 	})
+	fruit := []string{"🍇", "🍈", "🍉", "🍊", "🍋", "🍌", "🍍", "🥭", "🍎", "🍏", "🍐", "🍑", "🍒", "🍓", "🥝"}
+	rand.Seed(time.Now().Unix())
 	selfClient.OnConnect(func() {
 		fmt.Println("Connected self")
+		selfClient.Say("turtoise", "/me turtMunch "+fruit[rand.Intn(len(fruit))])
 	})
 
 	botClient.OnConnect(func() {
 		fmt.Println("Connected bot")
+		botClient.Say("turtoise", "/me turtMunch "+fruit[rand.Intn(len(fruit))])
 	})
 	go func() {
 		err := botClient.Connect()

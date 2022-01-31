@@ -18,7 +18,7 @@ func main() {
 	}
 
 	// do stuff
-	selfClient.Join("michaelreeves", "turtoise", "quinndt", "snappingbot")
+	selfClient.Join("michaelreeves", "turtoise", "quinndt", "snappingbot", "pajlada")
 	announceSnappingbotGone := func(message twitch.PrivateMessage) {
 		// fmt.Println("anounce")
 		command := strings.Split(message.Message, " ")[0]
@@ -91,6 +91,11 @@ func main() {
 			}
 		}
 	}
+	reactToPajbot := func(message twitch.PrivateMessage) {
+		if message.User.Name == "pajbot" && message.Action && message.Message == "pajaS 🚨 ALERT" {
+			selfClient.Say(message.Channel, "pajaVanish 🚨 ALERT RECIEVED")
+		}
+	}
 	selfClient.OnPrivateMessage(func(message twitch.PrivateMessage) {
 		fmt.Printf("[#%s] <%s>: %s\n", message.Channel, message.User.Name, message.Message)
 		if !UserCheckLimit(message.User.Name) || !ChannelCheckLimit(message.Channel) {
@@ -101,6 +106,8 @@ func main() {
 			permitUsers(message)
 		} else if message.Channel == "turtoise" || message.Channel == "snappingbot" || message.Channel == "quinndt" {
 			announceSnappingbotGone(message)
+		} else if message.Channel == "pajlada" {
+			reactToPajbot(message)
 		}
 	})
 	selfClient.OnConnect(func() {

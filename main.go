@@ -95,7 +95,7 @@ func main() {
 	}
 	reactToPajbot := func(message twitch.PrivateMessage) {
 		if message.User.Name == "pajbot" && message.Action && message.Message == "pajaS 🚨 ALERT" {
-			selfClient.Say(message.Channel, "/me pajaVanish 🚨 ALERT RECEIVED")
+			botClient.Say(message.Channel, "/me pajaVanish 🚨 ALERT RECEIVED")
 		}
 	}
 	selfClient.OnPrivateMessage(func(message twitch.PrivateMessage) {

@@ -11,16 +11,15 @@ import (
 )
 
 func main() {
-	var selfClient, botClient *twitch.Client
+	var botClient *twitch.Client
 	{ // scoped so variables containing private information arent even availible outside
-		user, pass, otheruser, otherpass, err := getLogin()
+		_, _, otheruser, otherpass, err := getLogin()
 		must(err)
-		selfClient = twitch.NewClient(user, pass)
 		botClient = twitch.NewClient(otheruser, otherpass)
 	}
 
 	// do stuff
-	selfClient.Join("michaelreeves", "turtoise", "quinndt", "snappingbot", "pajlada")
+	botClient.Join("turtoise", "quinndt", "snappingbot", "pajlada")
 	announceSnappingbotGone := func(message twitch.PrivateMessage) {
 		// fmt.Println("anounce")
 		command := strings.Split(message.Message, " ")[0]
@@ -32,81 +31,18 @@ func main() {
 			botClient.Say(message.Channel, "snappingbot is offline sorry for any inconvenience - @t󠀀urtoise")
 		}
 	}
-	permitUsers := func(message twitch.PrivateMessage) {
-		args := strings.Split(message.Message, " ")
-		if len(args) > 1 {
-			args[1] = strings.ToLower(args[1])
-		}
-		if message.User.Badges["moderator"] == 1 {
-			// mod zone
-			if args[0] == "!permitremove" {
-				// remove user
-				if len(args) < 2 {
-					RegisterUserChannelComboAllin1(message.User.ID, message.Channel)
-					selfClient.Say(message.Channel, "remove who")
-					return
-				}
-				err := removeUserFromList(args[1])
-				if err != nil {
-					RegisterUserChannelComboAllin1(message.User.ID, message.Channel)
-					selfClient.Say(message.Channel, "err: "+err.Error())
-					return
-				}
-				RegisterUserChannelComboAllin1(message.User.ID, message.Channel)
-				selfClient.Say(message.Channel, args[1]+" can no longer use !permitme Okayge")
-				return
-			}
-			if args[0] == "!permitadd" {
-				// add user
-				if len(args) < 2 {
-					RegisterUserChannelComboAllin1(message.User.ID, message.Channel)
-					selfClient.Say(message.Channel, "add who")
-					return
-				}
-				err := addUsertoList(args[1])
-				if err != nil {
-					RegisterUserChannelComboAllin1(message.User.ID, message.Channel)
-					selfClient.Say(message.Channel, "err: "+err.Error())
-					return
-				}
-				RegisterUserChannelComboAllin1(message.User.ID, message.Channel)
-				selfClient.Say(message.Channel, args[1]+" can now use !permitme Okayge")
-				return
-			}
-			if args[0] == "!permithelp" {
-				// show help
-				RegisterUserChannelComboAllin1(message.User.ID, message.Channel)
-				selfClient.Say(message.Channel, "Mods can use !permitadd and !permitremove to manage who can use !permitme, !permitme posts !permit <user>.")
-				return
-			}
-			return
-		}
-		if args[0] == "!permitme" {
-			if userIsOnList(message.User.Name) {
-				go func() {
-					// send !permit <user>
-					// time.Sleep(time.Duration((rand.Intn(4) + 1)) * time.Second) // wait 1-5 seconds, as recommended by dim
-					RegisterUserChannelComboAllin1(message.User.ID, message.Channel)
-					selfClient.Say(message.Channel, fmt.Sprintf("!permit %s", message.User.Name))
-				}()
-				return
-			}
-		}
-	}
 	reactToPajbot := func(message twitch.PrivateMessage) {
 		if message.User.Name == "pajbot" && message.Action && message.Message == "pajaS 🚨 ALERT" {
 			botClient.Say(message.Channel, "/me pajaVanish 🚨 ALERT RECEIVED")
 		}
 	}
-	selfClient.OnPrivateMessage(func(message twitch.PrivateMessage) {
+	botClient.OnPrivateMessage(func(message twitch.PrivateMessage) {
 		fmt.Printf("[#%s] <%s>: %s\n", message.Channel, message.User.Name, message.Message)
 		if !UserCheckLimit(message.User.Name) || !ChannelCheckLimit(message.Channel) {
 			fmt.Println("skip because ratelimit")
 			return
 		}
-		if message.Channel == "michaelreeves" {
-			permitUsers(message)
-		} else if message.Channel == "turtoise" || message.Channel == "snappingbot" || message.Channel == "quinndt" {
+		if message.Channel == "turtoise" || message.Channel == "snappingbot" || message.Channel == "quinndt" {
 			announceSnappingbotGone(message)
 		} else if message.Channel == "pajlada" {
 			reactToPajbot(message)
@@ -114,20 +50,11 @@ func main() {
 	})
 	fruit := []string{"🍇", "🍈", "🍉", "🍊", "🍋", "🍌", "🍍", "🥭", "🍎", "🍏", "🍐", "🍑", "🍒", "🍓", "🥝"}
 	rand.Seed(time.Now().Unix())
-	selfClient.OnConnect(func() {
-		fmt.Println("Connected self")
-		selfClient.Say("turtoise", "/me turtMunch "+fruit[rand.Intn(len(fruit))])
-	})
-
 	botClient.OnConnect(func() {
 		fmt.Println("Connected bot")
 		botClient.Say("turtoise", "/me turtMunch "+fruit[rand.Intn(len(fruit))])
 	})
-	go func() {
-		err := botClient.Connect()
-		must(err)
-	}()
-	err := selfClient.Connect()
+	err := botClient.Connect()
 	must(err)
 }
 

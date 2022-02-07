@@ -13,13 +13,13 @@ import (
 func main() {
 	var botClient *twitch.Client
 	{ // scoped so variables containing private information arent even availible outside
-		_, _, otheruser, otherpass, err := getLogin()
+		otheruser, otherpass, err := getLogin()
 		must(err)
 		botClient = twitch.NewClient(otheruser, otherpass)
 	}
 
 	// do stuff
-	botClient.Join("turtoise", "quinndt", "snappingbot", "pajlada")
+	botClient.Join("turtoise", "quinndt", "snappingbot", "pajlada", "supinic")
 	announceSnappingbotGone := func(message twitch.PrivateMessage) {
 		// fmt.Println("anounce")
 		command := strings.Split(message.Message, " ")[0]
@@ -33,7 +33,14 @@ func main() {
 	}
 	reactToPajbot := func(message twitch.PrivateMessage) {
 		if message.User.Name == "pajbot" && message.Action && message.Message == "pajaS 🚨 ALERT" {
+			UserRegisterLimit("pajbot")
 			botClient.Say(message.Channel, "/me pajaVanish 🚨 ALERT RECEIVED")
+		}
+	}
+	reactToSupibot := func(message twitch.PrivateMessage) {
+		if message.User.Name == "supibot" && message.Message == "ppCircle" {
+			UserRegisterLimit("supibot")
+			botClient.Say(message.Channel, "ppOverheat ￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼ ￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼  ppCircleHeat")
 		}
 	}
 	botClient.OnPrivateMessage(func(message twitch.PrivateMessage) {
@@ -46,6 +53,8 @@ func main() {
 			announceSnappingbotGone(message)
 		} else if message.Channel == "pajlada" {
 			reactToPajbot(message)
+		} else if message.Channel == "supinic" {
+			reactToSupibot(message)
 		}
 	})
 	fruit := []string{"🍇", "🍈", "🍉", "🍊", "🍋", "🍌", "🍍", "🥭", "🍎", "🍏", "🍐", "🍑", "🍒", "🍓", "🥝"}
@@ -63,16 +72,8 @@ func must(err error) {
 		panic(err)
 	}
 }
-func getLogin() (user string, pass string, otheruser string, otherpass string, err error) {
-	_user, err := ioutil.ReadFile("username")
-	if err != nil {
-		return
-	}
-	_pass, err := ioutil.ReadFile("password")
-	if err != nil {
-		return
-	}
 
+func getLogin() (otheruser string, otherpass string, err error) {
 	_otheruser, err := ioutil.ReadFile("otherusername")
 	if err != nil {
 		return
@@ -83,5 +84,5 @@ func getLogin() (user string, pass string, otheruser string, otherpass string, e
 		return
 	}
 
-	return string(_user), string(_pass), string(_otheruser), string(_otherpass), nil
+	return string(_otheruser), string(_otherpass), nil
 }

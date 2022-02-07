@@ -22,9 +22,10 @@ func main() {
 	botClient.Join("turtoise", "quinndt", "snappingbot", "pajlada", "supinic")
 	announceSnappingbotGone := func(message twitch.PrivateMessage) {
 		// fmt.Println("anounce")
-		command := strings.Split(message.Message, " ")[0]
+		command := strings.ToLower(strings.Split(message.Message, " ")[0])
 		if strings.HasPrefix(message.Message, "+") &&
 			command != "+" &&
+			command != "+l" &&
 			command != "+ratio" {
 			// fmt.Println("anounce2")
 			RegisterUserChannelComboAllin1(message.User.ID, message.Channel)

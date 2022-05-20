@@ -37,9 +37,9 @@ func main() {
 			UserRegisterLimit("pajbot")
 			botClient.Say(message.Channel, "/me pajaVanish 🚨 ALERT RECEIVED")
 		}
-		if message.User.Name == "mm_sutilitybot" && strings.StartsWith(message.Message, "/announce 🅱") {
+		if message.User.Name == "mm_sutilitybot" && strings.HasPrefix(message.Message, "/announce 🅱") {
 			UserRegisterLimit("mm_sutilitybot")
-			botClient.Say(message.Channel, "/ /announce 💿"
+			botClient.Say(message.Channel, "/ /announce 💿")
 		}
 	}
 	reactToSupibot := func(message twitch.PrivateMessage) {

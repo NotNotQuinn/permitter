@@ -20,22 +20,26 @@ func main() {
 
 	// do stuff
 	botClient.Join("turtoise", "quinndt", "snappingbot", "pajlada", "supinic")
-	announceSnappingbotGone := func(message twitch.PrivateMessage) {
-		// fmt.Println("anounce")
-		command := strings.ToLower(strings.Split(message.Message, " ")[0])
-		if strings.HasPrefix(message.Message, "+") &&
-			command != "+" &&
-			command != "+l" &&
-			command != "+ratio" {
-			// fmt.Println("anounce2")
-			RegisterUserChannelComboAllin1(message.User.ID, message.Channel)
-			botClient.Say(message.Channel, "snappingbot is offline sorry for any inconvenience - @t󠀀urtoise")
-		}
-	}
+	// announceSnappingbotGone := func(message twitch.PrivateMessage) {
+	// 	// fmt.Println("anounce")
+	// 	command := strings.ToLower(strings.Split(message.Message, " ")[0])
+	// 	if strings.HasPrefix(message.Message, "+") &&
+	// 		command != "+" &&
+	// 		command != "+l" &&
+	// 		command != "+ratio" {
+	// 		// fmt.Println("anounce2")
+	// 		RegisterUserChannelComboAllin1(message.User.ID, message.Channel)
+	// 		botClient.Say(message.Channel, "snappingbot is offline sorry for any inconvenience - @t󠀀urtoise")
+	// 	}
+	// }
 	reactToPajbot := func(message twitch.PrivateMessage) {
 		if message.User.Name == "pajbot" && message.Action && message.Message == "pajaS 🚨 ALERT" {
 			UserRegisterLimit("pajbot")
 			botClient.Say(message.Channel, "/me pajaVanish 🚨 ALERT RECEIVED")
+		}
+		if message.User.Name == "mm_sutilitybot" && strings.StartsWith(message.Message, "/announce 🅱") {
+			UserRegisterLimit("mm_sutilitybot")
+			botClient.Say(message.Channel, "/ /announce 💿"
 		}
 	}
 	reactToSupibot := func(message twitch.PrivateMessage) {
@@ -51,7 +55,7 @@ func main() {
 			return
 		}
 		if message.Channel == "turtoise" || message.Channel == "snappingbot" || message.Channel == "quinndt" {
-			announceSnappingbotGone(message)
+			// qannounceSnappingbotGone(message)
 		} else if message.Channel == "pajlada" {
 			reactToPajbot(message)
 		} else if message.Channel == "supinic" {
